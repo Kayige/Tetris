@@ -1,2 +1,2 @@
-# Tetris
-Javascript Tetris
+# Tetris Game
+Javascript Tetris Clone
