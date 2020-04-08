@@ -3,7 +3,8 @@ const context = canvas.getContext('2d');
 
 context.scale(20, 20);
 
-function arenaSweep() {
+// Clear Board on Lose
+function clearBoard() {
     let rowCount = 1;
     outer: for (let y = arena.length - 1; y > 0; --y) {
         for (let x = 0; x < arena[y].length; ++x) {
@@ -20,7 +21,8 @@ function arenaSweep() {
     }
 }
 
-function collide(arena, player) {
+// Create Boundaries to prevent out of canvas movement
+function boundary(arena, player) {
     const [m, o] = [player.matrix, player.pos];
     for (let y = 0; y < m.length; ++y) {
         for (let x = 0; x < m[y].length; ++x) {
@@ -107,6 +109,7 @@ function drawMatrix(matrix, offset) {
     });
 }
 
+// Merge to boundard and piece when it touches bottom
 function merge(arena, player) {
     player.matrix.forEach((row, y) => {
         row.forEach((value, x) => {
@@ -117,45 +120,35 @@ function merge(arena, player) {
     });
 }
 
-// movement functions
+// Movement for Down
 function playerDrop() {
     player.pos.y++;
-    if (collide(arena, player)) {
+    if (boundary(arena, player)) {
         player.pos.y--;
         merge(arena, player);
         playerReset();
-        arenaSweep();
+        clearBoard();
         updateScore();
     }
     dropCounter = 0;
 }
 
+// Movement for Left/Right
 function playerMove(offset) {
     player.pos.x += offset;
-    if (collide(arena, player)) {
+    if (boundary(arena, player)) {
         player.pos.x -= offset;
     }
 }
 
-function playerReset() {
-    const pieces = 'ILJOTSZ';
-    player.matrix = createPiece(pieces[pieces.length * Math.random() | 0]);
-    player.pos.y = 0;
-    player.pos.x = (arena[0].length / 2 | 0) - (player.matrix[0].length / 2 | 0);
-    if (collide(arena, player)) {
-        arena.forEach(row => row.fill(0));
-        player.score = 0;
-        updateScore();
-    }
-}
-
+// Movement for Rotation - Clockwise and Anti-Clockwise
 function playerRotate(dir) {
     const pos = player.pos.x;
     // initialise offset variable
     let offset = 1;
     rotate(player.matrix, dir);
     // Check collision
-    while (collide(arena, player)) {
+    while (boundary(arena, player)) {
         player.pos.x += offset;
         offset = -(offset + (offset > 0 ? 1 : -1));
         if (offset > player.matrix[0].length) {
@@ -166,6 +159,7 @@ function playerRotate(dir) {
     }
 }
 
+// Addon to confine to boundary
 function rotate(matrix, dir) {
     for (let y = 0; y < matrix.length; ++y) {
         for (let x = 0; x < y; ++x) {
@@ -182,6 +176,19 @@ function rotate(matrix, dir) {
         matrix.forEach(row => row.reverse());
     } else {
         matrix.reverse();
+    }
+}
+
+// Produce Random Piece / Reset Player Score on Lose
+function playerReset() {
+    const pieces = 'ILJOTSZ';
+    player.matrix = createPiece(pieces[pieces.length * Math.random() | 0]);
+    player.pos.y = 0;
+    player.pos.x = (arena[0].length / 2 | 0) - (player.matrix[0].length / 2 | 0);
+    if (boundary(arena, player)) {
+        arena.forEach(row => row.fill(0));
+        player.score = 0;
+        updateScore();
     }
 }
 
@@ -206,15 +213,15 @@ function update(time = 0) {
 
 // Movement Controls
 document.addEventListener('keydown', event => {
-    if (event.keyCode === 37) {
+    if (event.keyCode === 37) {         // KeyLeft : Move Left
         playerMove(-1);
-    } else if (event.keyCode === 39) {
+    } else if (event.keyCode === 39) {  // KeyRight : Move Right
         playerMove(1);
-    } else if (event.keyCode === 40) {
+    } else if (event.keyCode === 40) {  // KeyDown : Move Down 1 Step
         playerDrop();
-    } else if (event.keyCode === 81) {
+    } else if (event.keyCode === 81) {  // Q : Rotate Anti-Clockwise
         playerRotate(-1);
-    } else if (event.keyCode === 69) {
+    } else if (event.keyCode === 69) {  // E : Rotate Clockwise
         playerRotate(1);
     }
 });
@@ -224,7 +231,7 @@ function updateScore() {
     document.getElementById('score').innerText = player.score;
 }
 
-// Random Color for Bricks
+// Random Color for Bricks via Index
 const colors = [
     null,
     '#FF0D72',
@@ -236,6 +243,7 @@ const colors = [
     '#3877FF',
 ];
 
+// Variable for Board
 const arena = createMatrix(12, 20);
 
 // Game Init
