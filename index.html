@@ -13,15 +13,31 @@
         
         canvas {
             border: solid .2em #fff;
-            height: 90vh;
+            height: 80vh;
+        }
+        
+        div#display {
+            font-size: .5em !important;
+        }
+        
+        #instruction {
+            font-size: .3em !important;
         }
     </style>
 </head>
 
 <body>
-    <div id="score">Score</div>
+    <div id="display">
+        Score:
+        <div id="score"></div>
+    </div>
     <canvas id="tetris" width="240" height="400"></canvas>
     <script src="tetris.js"></script>
+    <div id="instruction">
+        <p>Movement Controls:</p>
+        <p>KeyDown , KeyLeft, KeyRight</p>
+        <p>Q : Rotate Counter-Clockwise, E : Rotate Clockwise</p>
+    </div>
 </body>
 
 </html>
