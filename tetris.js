@@ -36,6 +36,20 @@ function boundary(arena, player) {
     return false;
 }
 
+function drawGrid(arena) {
+  arena.forEach((row, y) => {
+    row.forEach((value, x) => {
+      const isEvenX = x % 2 != 0;
+      const isEvenY = y % 2 != 0;
+      const color = isEvenX ?
+        isEvenY ? "#292929" : "#212121" :
+        isEvenY ? "#212121" : "#292929";
+      context.fillStyle = color;
+      context.fillRect(x, y, 1, 1);
+    });
+  });
+}
+
 function createMatrix(w, h) {
     const matrix = [];
     while (h--) {
