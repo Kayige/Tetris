@@ -1,5 +1,9 @@
+// Variable for Board
 const canvas = document.getElementById('tetris');
 const context = canvas.getContext('2d');
+
+// 12(width) by 20(height) squares
+const arena = createMatrix(12, 20);
 
 context.scale(20, 20);
 
@@ -34,20 +38,6 @@ function boundary(arena, player) {
         }
     }
     return false;
-}
-
-function drawGrid(arena) {
-  arena.forEach((row, y) => {
-    row.forEach((value, x) => {
-      const isEvenX = x % 2 != 0;
-      const isEvenY = y % 2 != 0;
-      const color = isEvenX ?
-        isEvenY ? "#292929" : "#212121" :
-        isEvenY ? "#212121" : "#292929";
-      context.fillStyle = color;
-      context.fillRect(x, y, 1, 1);
-    });
-  });
 }
 
 function createMatrix(w, h) {
@@ -107,9 +97,26 @@ function createPiece(type) {
 function draw() {
     context.fillStyle = '#000';
     context.fillRect(0, 0, canvas.width, canvas.height);
-
-    drawMatrix(arena, { x: 0, y: 0 });
+    drawGrid(arena);
+    drawMatrix(arena, {
+        x: 0,
+        y: 0
+    });
     drawMatrix(player.matrix, player.pos);
+}
+
+function drawGrid(arena) {
+    arena.forEach((row, y) => {
+        row.forEach((value, x) => {
+            const isEvenX = x % 2 != 0;
+            const isEvenY = y % 2 != 0;
+            const color = isEvenX ?
+                isEvenY ? "#292929" : "#212121" :
+                isEvenY ? "#212121" : "#292929";
+            context.fillStyle = color;
+            context.fillRect(x, y, 1, 1);
+        });
+    });
 }
 
 function drawMatrix(matrix, offset) {
@@ -227,15 +234,17 @@ function update(time = 0) {
 
 // Movement Controls
 document.addEventListener('keydown', event => {
-    if (event.keyCode === 37) {         // KeyLeft : Move Left
+    if (event.keyCode === 37) { // KeyLeft : Move Left
         playerMove(-1);
-    } else if (event.keyCode === 39) {  // KeyRight : Move Right
+    } else if (event.keyCode === 39) { // KeyRight : Move Right
         playerMove(1);
-    } else if (event.keyCode === 40) {  // KeyDown : Move Down 1 Step
+    } else if (event.keyCode === 40) { // KeyDown : Move Down 1 Step
         playerDrop();
-    } else if (event.keyCode === 81) {  // Q : Rotate Anti-Clockwise
+    } else if (event.keyCode === 40 * 2) {
+
+    } else if (event.keyCode === 81) { // Q : Rotate Anti-Clockwise
         playerRotate(-1);
-    } else if (event.keyCode === 69) {  // E : Rotate Clockwise
+    } else if (event.keyCode === 69) { // E : Rotate Clockwise
         playerRotate(1);
     }
 });
@@ -257,12 +266,12 @@ const colors = [
     '#3877FF',
 ];
 
-// Variable for Board
-const arena = createMatrix(12, 20);
-
-// Game Init
+// Game Init Settings
 const player = {
-    pos: { x: 0, y: 0 },
+    pos: {
+        x: 0,
+        y: 0
+    },
     matrix: null,
     score: 0,
 }
