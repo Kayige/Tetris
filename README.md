@@ -16,6 +16,8 @@ The original idea was to create a 5-hour project to test my understanding of Jav
 - [x] Styling/Scaling
 - [x] Score Display
 - [x] Rotation
+- [x] Grid
+- [ ] Floor Drop
 - [ ] Levels
 - [ ] High Scoreboard
 
